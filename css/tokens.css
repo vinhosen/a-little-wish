@@ -1,0 +1,88 @@
+/* ==========================================================================
+   A Little Wish — Design Tokens
+   Direction: Sweet Romantic · Playful & Cute · Minimal · Cinematic Moonlit
+   ========================================================================== */
+
+:root {
+  /* Palette — Deep Moonlit Indigo & Warm Candlelight (No neon/purple clichés) */
+  --night-abyss: #060e1d;
+  --night-deep: #0a162b;
+  --night-indigo: #112240;
+  --night-mist: #1c3459;
+  --river-surface: #0c1b33;
+
+  --moon-ivory: #fbf4e4;
+  --moon-cream: #f2e5cb;
+  --moon-silver: #c9d5e6;
+  --moon-muted: #93a6c2;
+
+  --candle-core: #fff6d9;
+  --candle-gold: #f5c77e;
+  --candle-amber: #e69d4c;
+  --candle-glow: rgba(245, 199, 126, 0.34);
+
+  --lotus-blush: #f2bcc8;
+  --lotus-rose: #d98ca0;
+  --leaf-sage: #5c8a72;
+
+  /* Translucent Surfaces (Textured glass / moonlit vellum feel) */
+  --surface-card: rgba(12, 24, 46, 0.68);
+  --surface-card-strong: rgba(10, 20, 39, 0.82);
+  --surface-vellum: rgba(251, 244, 228, 0.08);
+  --surface-chip: rgba(251, 244, 228, 0.09);
+  --surface-chip-hover: rgba(245, 199, 126, 0.18);
+  --border-subtle: rgba(251, 244, 228, 0.14);
+  --border-warm: rgba(245, 199, 126, 0.32);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', 'Noto Serif Thai', Georgia, serif;
+  --font-serif-th: 'Noto Serif Thai', 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Noto Sans Thai', 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Fluid Type Scale (Mobile First) */
+  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.84rem);
+  --text-sm: clamp(0.875rem, 0.84rem + 0.18vw, 0.96rem);
+  --text-base: clamp(0.97rem, 0.93rem + 0.22vw, 1.06rem);
+  --text-lg: clamp(1.15rem, 1.08rem + 0.35vw, 1.35rem);
+  --text-xl: clamp(1.55rem, 1.35rem + 1vw, 2.1rem);
+  --text-hero: clamp(2.35rem, 1.9rem + 2.4vw, 3.65rem);
+
+  /* Spacing & Layout */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.35rem;
+  --space-6: 1.75rem;
+  --space-8: 2.5rem;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-pill: 999px;
+
+  --content-max-w: 440px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Motion */
+  --ease-gentle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 240ms;
+  --dur-mid: 520ms;
+  --dur-scene: 820ms;
+
+  /* Shadows */
+  --shadow-card: 0 22px 54px rgba(4, 10, 22, 0.55), inset 0 1px 0 rgba(251, 244, 228, 0.12);
+  --shadow-btn-warm: 0 10px 28px rgba(230, 157, 76, 0.28), 0 2px 8px rgba(4, 10, 22, 0.35);
+
+  /* Z-index layers */
+  --z-sky: 1;
+  --z-moon: 2;
+  --z-river-bg: 3;
+  --z-canvas: 4;
+  --z-vignette: 5;
+  --z-scenes: 10;
+  --z-hud: 25;
+  --z-toast: 40;
+}

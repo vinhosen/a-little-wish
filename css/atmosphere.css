@@ -1,0 +1,162 @@
+/* ==========================================================================
+   A Little Wish — Cinematic Moonlit Atmosphere Layers
+   Layered Sky + Luminous Full Moon + Thai Riverside + Live Water Canvas
+   ========================================================================== */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sky);
+  overflow: hidden;
+  background: linear-gradient(180deg, #060f20 0%, #0d1d3a 52%, #081326 100%);
+  pointer-events: none;
+}
+
+/* Layer 1: Painted Night Sky */
+.atmo-sky {
+  position: absolute;
+  inset: -4% -4% 25% -4%;
+  z-index: var(--z-sky);
+  background-image: url('../assets/images/night-sky.jpg');
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.92;
+  will-change: transform;
+  animation: skyDrift 48s ease-in-out infinite alternate;
+}
+
+@keyframes skyDrift {
+  0% {
+    transform: scale(1.03) translate3d(-1.2%, 0, 0);
+  }
+  100% {
+    transform: scale(1.07) translate3d(1.2%, -0.8%, 0);
+  }
+}
+
+/* Layer 2: Painted Full Moonlight Asset */
+.atmo-moon-wrap {
+  position: absolute;
+  top: clamp(3.5%, 6vh, 8%);
+  left: 50%;
+  width: clamp(148px, 34vw, 236px);
+  aspect-ratio: 1;
+  transform: translate3d(-50%, 0, 0);
+  z-index: var(--z-moon);
+  transition: transform 1.2s var(--ease-gentle), opacity 1s var(--ease-gentle);
+  will-change: transform;
+}
+
+/* Subtle atmospheric position shifts per scene for cinematic depth */
+body[data-scene="1"] .atmo-moon-wrap {
+  transform: translate3d(-50%, 4%, 0) scale(1.06);
+}
+
+body[data-scene="2"] .atmo-moon-wrap {
+  transform: translate3d(-50%, -6%, 0) scale(0.9);
+  opacity: 0.88;
+}
+
+body[data-scene="3"] .atmo-moon-wrap {
+  transform: translate3d(-50%, -12%, 0) scale(0.82);
+  opacity: 0.78;
+}
+
+body[data-scene="4"] .atmo-moon-wrap {
+  transform: translate3d(-50%, -14%, 0) scale(0.8);
+  opacity: 0.72;
+}
+
+body[data-scene="5"] .atmo-moon-wrap {
+  transform: translate3d(-50%, 38%, 0) scale(0.94);
+  opacity: 1;
+}
+
+body[data-scene="6"] .atmo-moon-wrap {
+  transform: translate3d(-50%, -8%, 0) scale(0.88);
+  opacity: 0.9;
+}
+
+.atmo-moon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(251, 240, 208, 0.32));
+  animation: moonBreathe 7s ease-in-out infinite;
+}
+
+@keyframes moonBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.96;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+/* Layer 3: Painted Moonlit Thai Riverside & Horizon */
+.atmo-river-bg {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-river-bg);
+  background-image: url('../assets/images/moonlit-river-bg.jpg');
+  background-size: cover;
+  background-position: center 56%;
+  opacity: 0.94;
+  /* Softly reveal the wispy painted night sky & moon in the top 28% */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.14) 0%,
+    rgba(0, 0, 0, 0.42) 22%,
+    rgba(0, 0, 0, 0.94) 44%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.14) 0%,
+    rgba(0, 0, 0, 0.42) 22%,
+    rgba(0, 0, 0, 0.94) 44%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  transition: transform 1.2s var(--ease-gentle), filter 0.9s var(--ease-soft);
+  will-change: transform;
+}
+
+body[data-scene="2"] .atmo-river-bg,
+body[data-scene="3"] .atmo-river-bg,
+body[data-scene="4"] .atmo-river-bg {
+  transform: scale(1.04);
+}
+
+body[data-scene="5"] .atmo-river-bg {
+  transform: scale(1);
+}
+
+/* Layer 4: Interactive Canvas 2D Water, Ripples, Fireflies, Petals & Floating Krathong */
+.river-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-canvas);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* Layer 5: Gentle Atmospheric Vignette & Readability Scrim */
+.atmo-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-vignette);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 24%, transparent 20%, rgba(6, 14, 29, 0.38) 85%, rgba(4, 9, 20, 0.72) 100%),
+    linear-gradient(to top, rgba(5, 11, 24, 0.78) 0%, rgba(5, 11, 24, 0.18) 28%, transparent 52%);
+  transition: opacity 0.8s var(--ease-soft);
+}
+
+body[data-scene="5"] .atmo-vignette {
+  opacity: 0.65;
+}

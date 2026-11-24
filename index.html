@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#071123" />
+  <meta
+    name="description"
+    content="A Little Wish — ประสบการณ์ลอยกระทงเสมือนจริงใต้แสงจันทร์ เลือกกระทง จุดเทียน อธิษฐาน และปล่อยความปรารถนาเล็ก ๆ ล่องไปกับสายน้ำ"
+  />
+  <title>A Little Wish — คืนเพ็ญและคำอธิษฐานเล็ก ๆ</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+
+  <!-- Google Fonts: Poetic Serif + Gentle Modern Thai Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/atmosphere.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/scenes.css" />
+</head>
+<body data-scene="1">
+  <div class="app-shell">
+    <!-- Persistent Layered Moonlit Atmosphere -->
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmo-sky"></div>
+      <div class="atmo-moon-wrap" id="atmo-moon-wrap">
+        <img
+          src="assets/images/moonlight.png"
+          alt=""
+          class="atmo-moon"
+          width="512"
+          height="512"
+        />
+      </div>
+      <div class="atmo-river-bg"></div>
+    </div>
+
+    <!-- Interactive Canvas 2D Water, Ripples, Petals, Fireflies & Floating Krathong -->
+    <canvas
+      id="river-canvas"
+      class="river-canvas"
+      aria-label="ผิวน้ำใต้แสงจันทร์แบบโต้ตอบได้ แตะเพื่อสร้างระลอกคลื่น"
+    ></canvas>
+
+    <!-- Soft Atmospheric Vignette -->
+    <div class="atmo-vignette" aria-hidden="true"></div>
+
+    <!-- Screen-reader live region for scene announcements -->
+    <div id="sr-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Persistent Minimal Top HUD -->
+    <header class="top-hud">
+      <div class="hud-group">
+        <nav class="scene-dots" aria-label="ความคืบหน้าของเรื่องราว 6 ฉาก">
+          <span class="scene-dot is-active" aria-hidden="true"></span>
+          <span class="scene-dot" aria-hidden="true"></span>
+          <span class="scene-dot" aria-hidden="true"></span>
+          <span class="scene-dot" aria-hidden="true"></span>
+          <span class="scene-dot" aria-hidden="true"></span>
+          <span class="scene-dot" aria-hidden="true"></span>
+        </nav>
+      </div>
+
+      <div class="hud-group">
+        <button
+          type="button"
+          id="btn-sound"
+          class="icon-btn"
+          aria-pressed="false"
+          aria-label="เปิดหรือปิดเสียงบรรยากาศ"
+        >
+          <svg
+            id="sound-icon-on"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            hidden
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <svg
+            id="sound-icon-off"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <span id="sound-label" class="icon-btn__label">ปิดเสียง</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Floating Wish Banner (Scene 5 ethereal release text) -->
+    <p id="floating-wish-banner" class="floating-wish-banner" aria-live="polite"></p>
+
+    <!-- 6-Scene Story Container -->
+    <main class="scenes-container">
+      <!-- ================================================================
+           SCENE 1: The Moonlit Night
+           ================================================================ -->
+      <section
+        id="scene-moonlit"
+        class="scene scene--moonlit is-active"
+        data-scene="1"
+        aria-label="ฉากที่ 1 ค่ำคืนใต้แสงจันทร์"
+        aria-hidden="false"
+      >
+        <div class="moonlit-hero scene-interactive">
+          <p class="moonlit-eyebrow reveal reveal-d1">คืนเพ็ญเดือนสิบสอง</p>
+          <h1 class="moonlit-title reveal reveal-d2">A Little Wish</h1>
+          <p class="moonlit-subtitle reveal reveal-d3">
+            คืนนี้พระจันทร์สวยจัง...<br />
+            มาใช้เวลาเล็ก ๆ ริมสายน้ำด้วยกันนะ
+          </p>
+          <button
+            type="button"
+            id="btn-begin"
+            class="btn-primary reveal reveal-d4"
+          >
+            เริ่มค่ำคืนนี้
+          </button>
+          <p class="moonlit-hint reveal reveal-d4">
+            แตะผิวน้ำเบา ๆ เพื่อสร้างระลอกคลื่นได้นะ
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           SCENE 2: A Little Invitation
+           ================================================================ -->
+      <section
+        id="scene-invitation"
+        class="scene scene--invitation"
+        data-scene="2"
+        aria-label="ฉากที่ 2 คำชวนเล็ก ๆ"
+        aria-hidden="true"
+      >
+        <article class="vellum-card scene-interactive">
+          <img
+            src="assets/images/decor-floral-ornament.png"
+            alt="ลวดลายกลีบบัวและดอกมะลิ"
+            class="ornament-floral reveal reveal-d1"
+            width="322"
+            height="120"
+          />
+          <p class="invitation-en reveal reveal-d1">A Little Invitation</p>
+          <h2 class="invitation-heading reveal reveal-d2">คำชวนเล็ก ๆ สำหรับคืนนี้</h2>
+          <div class="divider-line reveal reveal-d2" aria-hidden="true"></div>
+          <p class="invitation-body reveal reveal-d3">
+            เหนื่อยมาทั้งวันแล้วใช่ไหม<br />
+            คืนนี้ลองวางเรื่องหนักใจไว้ข้างหลังสักครู่<br />
+            เลือกกระทงใบที่ชอบ จุดเทียนดวงเล็ก ๆ<br />
+            แล้วฝากคำอธิษฐานให้สายน้ำพาไปอย่างอ่อนโยน
+          </p>
+          <div class="card-actions reveal reveal-d4">
+            <button type="button" id="btn-to-choose" class="btn-primary btn-block">
+              เลือกกระทงของคุณ
+            </button>
+            <button type="button" id="btn-back-to-1" class="btn-ghost">
+              กลับไปชมแสงจันทร์
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- ================================================================
+           SCENE 3: Choose Your Krathong
+           ================================================================ -->
+      <section
+        id="scene-choose"
+        class="scene scene--choose"
+        data-scene="3"
+        aria-label="ฉากที่ 3 เลือกกระทงของคุณ"
+        aria-hidden="true"
+      >
+        <div class="vellum-card choose-panel scene-interactive">
+          <h2 class="section-heading reveal reveal-d1">เลือกกระทงที่อยากลอยคืนนี้</h2>
+          <p class="section-sub reveal reveal-d1">
+            ปัดซ้าย–ขวา หรือแตะเพื่อเลือกกระทงทั้ง 3 แบบ
+          </p>
+
+          <div
+            id="krathong-carousel-stage"
+            class="carousel-stage reveal reveal-d2"
+            aria-roledescription="carousel"
+            aria-label="ตัวเลือกกระทง 3 รูปแบบ"
+          >
+            <button
+              type="button"
+              id="btn-prev-krathong"
+              class="carousel-arrow carousel-arrow--prev"
+              aria-label="กระทงก่อนหน้า"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+
+            <div id="choose-krathong-assembly" class="krathong-assembly">
+              <div class="krathong-water-glow" aria-hidden="true"></div>
+              <img
+                src="assets/images/krathong-lotus.png"
+                alt="กระทงบัวชมพูแสงจันทร์"
+                class="krathong-base-img"
+                width="640"
+                height="506"
+              />
+              <div class="krathong-candle-wrap" aria-hidden="true">
+                <img
+                  src="assets/images/candle.png"
+                  alt=""
+                  class="krathong-candle-img"
+                  width="94"
+                  height="320"
+                />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              id="btn-next-krathong"
+              class="carousel-arrow carousel-arrow--next"
+              aria-label="กระทงถัดไป"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div id="krathong-meta" class="krathong-meta reveal reveal-d2">
+            <h3 id="krathong-name" class="krathong-name">กระทงบัวชมพูแสงจันทร์</h3>
+            <p id="krathong-desc" class="krathong-desc">
+              กลีบบัวสีชมพูอ่อนละมุน สำหรับคำอธิษฐานที่อบอุ่นและอ่อนโยน
+            </p>
+          </div>
+
+          <div class="krathong-thumbs reveal reveal-d3" role="group" aria-label="ทางลัดเลือกกระทง">
+            <button type="button" class="krathong-thumb is-selected" data-krathong-index="0" aria-pressed="true">
+              <img src="assets/images/krathong-lotus.png" alt="" width="64" height="51" />
+              <span>บัวชมพู</span>
+            </button>
+            <button type="button" class="krathong-thumb" data-krathong-index="1" aria-pressed="false">
+              <img src="assets/images/krathong-classic.png" alt="" width="64" height="52" />
+              <span>ใบตองคลาสสิก</span>
+            </button>
+            <button type="button" class="krathong-thumb" data-krathong-index="2" aria-pressed="false">
+              <img src="assets/images/krathong-swan.png" alt="" width="64" height="56" />
+              <span>หงส์น้อย</span>
+            </button>
+          </div>
+
+          <div class="card-actions reveal reveal-d4">
+            <button type="button" id="btn-to-wish" class="btn-primary btn-block">
+              ใช้กระทงใบนี้
+            </button>
+            <button type="button" id="btn-back-to-2" class="btn-ghost">
+              ย้อนกลับ
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           SCENE 4: Make A Wish
+           ================================================================ -->
+      <section
+        id="scene-wish"
+        class="scene scene--wish"
+        data-scene="4"
+        aria-label="ฉากที่ 4 จุดเทียนและอธิษฐาน"
+        aria-hidden="true"
+      >
+        <div class="vellum-card wish-panel scene-interactive">
+          <h2 class="section-heading reveal reveal-d1">จุดเทียนและอธิษฐาน</h2>
+
+          <div class="wish-stage reveal reveal-d2">
+            <div id="wish-krathong-assembly" class="krathong-assembly krathong-assembly--compact">
+              <div class="krathong-bob-layer">
+                <div class="krathong-water-glow" aria-hidden="true"></div>
+                <img
+                  src="assets/images/krathong-lotus.png"
+                  alt="กระทงที่คุณเลือก"
+                  class="krathong-base-img"
+                  width="640"
+                  height="506"
+                />
+                <div class="krathong-candle-wrap" aria-hidden="true">
+                  <div class="krathong-candle-aura"></div>
+                  <img
+                    src="assets/images/candle.png"
+                    alt=""
+                    class="krathong-candle-img"
+                    width="94"
+                    height="320"
+                  />
+                  <img
+                    src="assets/images/flame.png"
+                    alt=""
+                    class="krathong-flame-img"
+                    width="203"
+                    height="256"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="btn-light-candle"
+                class="candle-hotspot"
+                aria-label="แตะเพื่อจุดเทียนบนกระทง"
+              >
+                <span class="candle-hotspot__ring" aria-hidden="true"></span>
+                <span class="spark-burst" aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <p id="candle-status" class="candle-status">
+              แตะที่ไส้เทียนเพื่อจุดไฟดวงเล็ก ๆ
+            </p>
+          </div>
+
+          <div class="wish-box reveal reveal-d3">
+            <label for="wish-input" class="sr-only">คำอธิษฐานของคุณ</label>
+            <textarea
+              id="wish-input"
+              class="wish-textarea"
+              maxlength="140"
+              rows="2"
+              placeholder="เขียนคำอธิษฐานเล็ก ๆ ที่อยากฝากไปกับสายน้ำ... (หรือเก็บไว้ในใจก็ได้นะ)"
+            ></textarea>
+            <span id="wish-counter" class="wish-counter" aria-live="off">0 / 140</span>
+          </div>
+
+          <div class="wish-chips reveal reveal-d3" role="group" aria-label="ตัวอย่างคำอธิษฐาน">
+            <button type="button" class="wish-chip" data-wish="ขอให้คืนนี้ใจเบาสบาย">
+              ขอให้คืนนี้ใจเบาสบาย
+            </button>
+            <button type="button" class="wish-chip" data-wish="ขอให้ทุกวันข้างหน้าอ่อนโยนกับเรา">
+              ขอให้ทุกวันข้างหน้าอ่อนโยนกับเรา
+            </button>
+            <button type="button" class="wish-chip" data-wish="ขอให้มีรอยยิ้มในเรื่องเล็ก ๆ เสมอ">
+              ขอให้มีรอยยิ้มในเรื่องเล็ก ๆ เสมอ
+            </button>
+          </div>
+
+          <div class="card-actions reveal reveal-d4">
+            <button type="button" id="btn-to-float" class="btn-primary btn-block btn-soft-glow">
+              จุดเทียนก่อนปล่อยกระทง
+            </button>
+            <button type="button" id="btn-back-to-3" class="btn-ghost">
+              เปลี่ยนกระทง
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           SCENE 5: Let It Float
+           ================================================================ -->
+      <section
+        id="scene-float"
+        class="scene scene--float"
+        data-scene="5"
+        aria-label="ฉากที่ 5 ปล่อยกระทงลงสายน้ำ"
+        aria-hidden="true"
+      >
+        <div id="float-header" class="float-header reveal reveal-d1">
+          <h2 id="float-caption" class="float-caption">กระทงพร้อมลอยแล้ว</h2>
+          <p id="float-subcaption" class="float-subcaption">
+            ค่อย ๆ ดันกระทงขึ้น หรือแตะปุ่มด้านล่างเพื่อปล่อยลงสายน้ำ
+          </p>
+        </div>
+
+        <div class="float-controls scene-interactive">
+          <div id="swipe-up-cue" class="swipe-up-cue" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+            <span>ดันขึ้นเบา ๆ เพื่อปล่อยกระทง</span>
+          </div>
+
+          <button type="button" id="btn-release-krathong" class="btn-primary btn-block">
+            ค่อย ๆ ปล่อยกระทงลงน้ำ
+          </button>
+
+          <button type="button" id="btn-to-message" class="btn-secondary btn-block is-hidden-soft" hidden>
+            เปิดข้อความเล็ก ๆ
+          </button>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           SCENE 6: A Little Message
+           ================================================================ -->
+      <section
+        id="scene-message"
+        class="scene scene--message"
+        data-scene="6"
+        aria-label="ฉากที่ 6 ข้อความเล็ก ๆ ใต้แสงจันทร์"
+        aria-hidden="true"
+      >
+        <article id="keepsake-card" class="vellum-card keepsake-card scene-interactive">
+          <img
+            src="assets/images/decor-floral-ornament.png"
+            alt="ลวดลายกลีบบัวและดอกมะลิ"
+            class="ornament-floral reveal reveal-d1"
+            width="322"
+            height="120"
+          />
+
+          <div class="keepsake-emblem reveal reveal-d1">
+            <div id="keepsake-krathong-assembly" class="krathong-assembly krathong-assembly--mini is-lit">
+              <div class="krathong-water-glow" aria-hidden="true"></div>
+              <img
+                src="assets/images/krathong-lotus.png"
+                alt="กระทงที่คุณลอย"
+                class="krathong-base-img"
+                width="640"
+                height="506"
+              />
+              <div class="krathong-candle-wrap" aria-hidden="true">
+                <div class="krathong-candle-aura"></div>
+                <img
+                  src="assets/images/candle.png"
+                  alt=""
+                  class="krathong-candle-img"
+                  width="94"
+                  height="320"
+                />
+                <img
+                  src="assets/images/flame.png"
+                  alt=""
+                  class="krathong-flame-img"
+                  width="203"
+                  height="256"
+                />
+              </div>
+            </div>
+          </div>
+
+          <h2 class="section-heading reveal reveal-d2">ข้อความเล็ก ๆ ใต้แสงจันทร์</h2>
+
+          <div class="keepsake-wish-box reveal reveal-d2">
+            <p class="keepsake-wish-label">Your Little Wish</p>
+            <p id="keepsake-wish-text" class="keepsake-wish-text">
+              “คำอธิษฐานเงียบ ๆ ที่เก็บไว้ในใจใต้แสงจันทร์”
+            </p>
+          </div>
+
+          <p class="keepsake-closing reveal reveal-d3">
+            ขอให้แสงจันทร์คืนนี้โอบกอดใจคุณไว้เบา ๆ<br />
+            และขอให้สายน้ำพาคำอธิษฐานเล็ก ๆ นี้<br />
+            ไปถึงวันที่อ่อนโยนและสวยงามนะ
+          </p>
+
+          <p class="keepsake-signoff reveal reveal-d3">
+            — A Little Wish · คืนเพ็ญเดือนสิบสอง —
+          </p>
+
+          <div class="keepsake-actions reveal reveal-d4">
+            <button type="button" id="btn-save-keepsake" class="btn-primary">
+              เก็บการ์ดความทรงจำ
+            </button>
+            <button type="button" id="btn-restart" class="btn-secondary">
+              เริ่มค่ำคืนใหม่อีกครั้ง
+            </button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Gentle Feedback Toast -->
+    <div id="app-toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

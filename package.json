@@ -1,0 +1,9 @@
+{
+  "name": "a-little-wish",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Little Wish — Interactive Virtual Loy Krathong under a moonlit sky",
+  "scripts": {
+    "start": "npx -y serve -l 8080 ."
+  }
+}

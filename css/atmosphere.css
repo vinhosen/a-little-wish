@@ -68,7 +68,7 @@ body[data-scene="4"] .atmo-moon-wrap {
 }
 
 body[data-scene="5"] .atmo-moon-wrap {
-  transform: translate3d(-50%, 38%, 0) scale(0.94);
+  transform: translate3d(-50%, 62%, 0) scale(0.88);
   opacity: 1;
 }
 

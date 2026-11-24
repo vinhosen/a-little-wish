@@ -1,9 +1,11 @@
 {
   "name": "a-little-wish",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "A Little Wish — Interactive Virtual Loy Krathong under a moonlit sky",
+  "type": "module",
+  "description": "A Little Wish — Virtual Loy Krathong Community under a moonlit sky",
   "scripts": {
-    "start": "npx -y serve -l 8080 ."
+    "start": "node server/index.mjs",
+    "serve:static": "npx -y serve -l 8080 ."
   }
 }

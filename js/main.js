@@ -1,37 +1,80 @@
 /**
- * A Little Wish — Application Entrypoint
- * Bootstraps preloaded image assets, Web Audio ambience, Canvas 2D river,
- * subtle pointer parallax, and the 6-scene interactive experience.
+ * A Little Wish — Virtual Loy Krathong Community Entrypoint
  */
 
-import { KRATHONGS } from './config.js';
 import { SoundEngine } from './audio.js';
+import { CreatorController } from './creatorController.js';
+import { KrathongRenderer } from './krathongRenderer.js';
 import { preloadImageMap } from './krathongView.js';
 import { RiverCanvas } from './riverCanvas.js';
 import { SceneManager } from './scenes.js';
+import { CommunityBackend } from './services/communityBackend.js';
+import { store } from './state.js';
 
 async function initApp() {
   const canvas = document.getElementById('river-canvas');
   const moonWrap = document.getElementById('atmo-moon-wrap');
 
-  // 1. Preload all real visual assets cleanly
-  const images = await preloadImageMap(KRATHONGS);
+  // 1. Preload all 26 painted assets cleanly
+  const images = await preloadImageMap();
 
-  // 2. Initialize Web Audio engine
+  // 2. Initialize Unified Modular Renderer, Web Audio & Community Backend
+  const renderer = new KrathongRenderer(images);
   const sound = new SoundEngine();
+  const backend = new CommunityBackend();
+  const mode = await backend.init();
+  store.update({ backendMode: mode });
 
-  // 3. Start interactive Canvas 2D moonlit river
-  const riverCanvas = new RiverCanvas(canvas, images, {
+  // 3. Initialize Interactive Community River Canvas (with tap hit-testing -> Profile Popup)
+  let sceneManager = null;
+  const riverCanvas = new RiverCanvas(canvas, images, renderer, {
     onWaterTap: () => {
       sound.playWaterRipple();
+    },
+    onKrathongTap: (record) => {
+      if (sceneManager) {
+        sceneManager.openProfilePopup(record);
+      }
     },
   });
   riverCanvas.start();
 
-  // 4. Mount 6-scene controller
-  new SceneManager({ riverCanvas, sound, images });
+  // 4. Initialize Krathong Creator + 10-Collection Controller
+  let draftSaveTimer = null;
+  const creator = new CreatorController({
+    renderer,
+    sound,
+    onDraftChanged: () => {
+      // Debounced draft save when player already has an active session
+      if (!store.current.session) return;
+      if (draftSaveTimer) clearTimeout(draftSaveTimer);
+      draftSaveTimer = setTimeout(async () => {
+        try {
+          const saved = await backend.saveKrathong({
+            krathongId: store.current.editingKrathongId,
+            designConfig: store.current.designConfig,
+            wishMessage: store.current.wishText,
+            releaseStatus: 'draft',
+          });
+          store.update({ editingKrathongId: saved.krathongId });
+        } catch {
+          // ignore silent background draft failure
+        }
+      }, 900);
+    },
+  });
 
-  // 5. Subtle moonlight pointer parallax on desktop (disabled under reduced-motion)
+  // 5. Mount 6-Scene Manager
+  sceneManager = new SceneManager({
+    riverCanvas,
+    renderer,
+    creator,
+    backend,
+    sound,
+    images,
+  });
+
+  // 6. Subtle moonlight pointer parallax on desktop (disabled under reduced-motion)
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reducedMotion && moonWrap && window.matchMedia('(pointer: fine)').matches) {
     window.addEventListener(

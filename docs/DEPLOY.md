@@ -1,74 +1,40 @@
-# Deployment Guide — A Little Wish
+# Deployment Guide — A Little Wish Community
 
-`A Little Wish` เป็นเว็บไซต์แบบ Static HTML/CSS/Vanilla JavaScript (ES Modules) โดยไม่จำเป็นต้องใช้ Build Step หรือ Backend Server ทำให้สามารถ Deploy ได้ทันทีบนผู้ให้บริการ Static Hosting ชั้นนำทุกเจ้า
-
-> **หมายเหตุสำคัญ:** เนื่องจากโปรเจกต์ใช้ Native ES Modules (`<script type="module">`) ควรเปิดผ่าน HTTP/HTTPS Server (เช่น `python3 -m http.server`, `npx serve`, หรือ Static Hosting) แทนการดับเบิลคลิกเปิดไฟล์ `file://` โดยตรง เพื่อหลีกเลี่ยงข้อจำกัดด้าน CORS ของเบราว์เซอร์
+โปรเจกต์ `A Little Wish` รองรับการ Deploy ทั้งแบบ **Static Hosting + Supabase Cloud** (แนะนำสำหรับชุมชนออนไลน์จริง) และแบบ **Node.js Fullstack Server**
 
 ---
 
-## 1. Netlify (แนะนำ — เร็วที่สุด)
+## ตัวเลือกที่ 1: GitHub Pages / Netlify / Vercel + Supabase Cloud (แนะนำ)
 
-### วิธี Drag & Drop
-1. เข้าสู่ [app.netlify.com](https://app.netlify.com)
-2. ลากโฟลเดอร์ `a-little-wish/` ทั้งโฟลเดอร์วางลงในหน้า **Sites**
-3. รอสักครู่ จะได้ URL แบบ HTTPS พร้อมใช้งานทันที
+เหมาะสำหรับเว็บสาธารณะที่มีผู้เล่นหลายคนพร้อมกันโดยไม่มีค่าใช้จ่ายเซิร์ฟเวอร์ Node:
 
-### วิธีผ่าน Netlify CLI
-```bash
-npm install -g netlify-cli
-cd a-little-wish
-netlify deploy --prod --dir=.
-```
-
----
-
-## 2. Vercel
-
-```bash
-npm install -g vercel
-cd a-little-wish
-vercel --prod
-```
-- ตั้งค่า **Framework Preset**: `Other`
-- ตั้งค่า **Output Directory**: `.` (ไม่ต้องใส่ Build Command)
+1. **เตรียมฐานข้อมูล Supabase (ฟรี):**
+   - สร้างโปรเจกต์ที่ [supabase.com](https://supabase.com)
+   - รันไฟล์ [`supabase/schema.sql`](../supabase/schema.sql) ใน SQL Editor
+2. **ตั้งค่า Client Config (ไม่ใส่ Secret Key):**
+   - เพิ่ม `<script>` ก่อน `js/main.js` ใน `index.html` หรือโหลด `backendConfig.js` ที่กำหนด `window.ALW_BACKEND_CONFIG = { supabaseUrl: '...', supabaseAnonKey: '...' }`
+3. **Deploy ไฟล์ Static:**
+   - **GitHub Pages:** Push ขึ้น Branch `main` (มี `.nojekyll` รองรับแล้ว)
+   - **Netlify / Vercel:** Deploy โฟลเดอร์ `a-little-wish/` โดยไม่ต้องตั้ง Build Command
 
 ---
 
-## 3. GitHub Pages
+## ตัวเลือกที่ 2: Fullstack Node.js Community Server (Render / Railway / Fly.io / VPS)
 
-1. Push โฟลเดอร์โปรเจกต์ขึ้น GitHub Repository (โดยให้ `index.html` อยู่ที่ Root ของ Repository หรือในโฟลเดอร์ `/docs`)
-2. ไปที่ **Settings → Pages**
-3. เลือก **Source**: `Deploy from a branch` → เลือก Branch `main` และโฟลเดอร์ `/ (root)`
-4. กด **Save** และรอประมาณ 1–2 นาที เว็บไซต์จะพร้อมใช้งานที่ `https://<username>.github.io/<repo-name>/`
+หากต้องการรันเซิร์ฟเวอร์ Node.js ในตัว (`server/index.mjs`) ที่เสิร์ฟทั้งเว็บและ Realtime SSE API:
 
----
-
-## 4. Cloudflare Pages
-
-1. ไปที่ Cloudflare Dashboard → **Workers & Pages → Create → Pages**
-2. เชื่อมต่อ Git Repository หรือเลือก **Direct Upload** แล้วอัปโหลดโฟลเดอร์ `a-little-wish/`
-3. ไม่ต้องใส่ Build Command และกำหนด **Build output directory** เป็น `/`
+1. อัปโหลดโปรเจกต์ขึ้น Repository
+2. ตั้งค่า Start Command: `npm start` (หรือ `node server/index.mjs`)
+3. กำหนด Environment Variables:
+   - `PORT=8080` (หรือพอร์ตที่ผู้ให้บริการกำหนด)
+   - `ALW_SESSION_SECRET=<สุ่มรหัสลับยาวอย่างน้อย 32 ตัวอักษร>`
+4. แนะนำให้ Mount Persistent Volume ที่ `/server/data` เพื่อเก็บไฟล์ `community.json` ข้ามการรีสตาร์ต
 
 ---
 
-## 5. รันทดสอบบนเครื่อง (Local Static Server)
+## ตัวเลือกที่ 3: Static Hosting อย่างเดียว (เช่น GitHub Pages ปัจจุบัน)
 
-เลือกใช้อย่างใดอย่างหนึ่งภายในโฟลเดอร์ `a-little-wish/`:
-
-```bash
-# Python 3
-python3 -m http.server 8080
-
-# หรือ Node.js (npx serve)
-npx -y serve -l 8080 .
-```
-
-จากนั้นเปิดเบราว์เซอร์ที่ `http://localhost:8080`
-
----
-
-## 6. Checklist ก่อนปล่อยใช้งานจริง
-
-- ตรวจสอบว่าโฟลเดอร์ `assets/images/` ถูกอัปโหลดครบทั้ง 11 ไฟล์
-- แนะนำให้เปิดผ่าน **HTTPS** เพื่อให้ Web Audio API และฟีเจอร์ดาวน์โหลดการ์ดความทรงจำทำงานได้ราบรื่นบน iOS Safari และ Android Chrome
-- หากต้องการปรับแต่งชื่อหรือข้อความต้อนรับ สามารถแก้ไขได้ใน `index.html` และ `js/config.js`
+- หากไม่ได้ต่อ Supabase หรือ Node Server เว็บไซต์จะทำงานในโหมด **Static Multi-Tab Sync** โดยอัตโนมัติ:
+  - มีกระทงตัวอย่าง `A Little Wish Collection` ครบทั้ง 10 ใบ (`SYS-KR-001`–`SYS-KR-010`)
+  - ผู้เล่นสามารถสร้าง แก้ไข และปล่อยกระทงได้จริง พร้อมซิงก์ข้ามแท็บในเบราว์เซอร์เดียวกัน
+  - เมื่อพร้อมเปิดเป็นชุมชนออนไลน์ข้ามเครื่อง สามารถต่อ Supabase ตาม [`docs/BACKEND_SETUP.md`](BACKEND_SETUP.md) ได้ทันทีโดยไม่ต้องแก้โค้ดหลัก

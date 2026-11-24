@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#071123" />
   <meta
     name="description"
-    content="A Little Wish — ประสบการณ์ลอยกระทงเสมือนจริงใต้แสงจันทร์ เลือกกระทง จุดเทียน อธิษฐาน และปล่อยความปรารถนาเล็ก ๆ ล่องไปกับสายน้ำ"
+    content="A Little Wish — ชุมชนลอยกระทงเสมือนจริงใต้แสงจันทร์ สร้างกระทงในแบบของคุณ จุดเทียนอธิษฐาน และชมกระทงของทุกคนล่องไปในแม่น้ำสายเดียวกัน"
   />
-  <title>A Little Wish — คืนเพ็ญและคำอธิษฐานเล็ก ๆ</title>
+  <title>A Little Wish — แม่น้ำแห่งคำอธิษฐานใต้แสงจันทร์</title>
   <link rel="icon" type="image/png" href="assets/images/favicon.png" />
 
   <!-- Google Fonts: Poetic Serif + Gentle Modern Thai Sans -->
@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="css/atmosphere.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/scenes.css" />
+  <link rel="stylesheet" href="css/community.css" />
 </head>
 <body data-scene="1">
   <div class="app-shell">
@@ -43,17 +44,17 @@
       <div class="atmo-river-bg"></div>
     </div>
 
-    <!-- Interactive Canvas 2D Water, Ripples, Petals, Fireflies & Floating Krathong -->
+    <!-- Interactive Canvas 2D Community River (Water Physics, Ripples, System & Player Krathongs) -->
     <canvas
       id="river-canvas"
       class="river-canvas"
-      aria-label="ผิวน้ำใต้แสงจันทร์แบบโต้ตอบได้ แตะเพื่อสร้างระลอกคลื่น"
+      aria-label="แม่น้ำกลางคืนแบบโต้ตอบได้ แตะผิวน้ำเพื่อสร้างคลื่น หรือแตะกระทงเพื่ออ่านคำอธิษฐาน"
     ></canvas>
 
     <!-- Soft Atmospheric Vignette -->
     <div class="atmo-vignette" aria-hidden="true"></div>
 
-    <!-- Screen-reader live region for scene announcements -->
+    <!-- Screen-reader live region -->
     <div id="sr-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Persistent Minimal Top HUD -->
@@ -67,9 +68,28 @@
           <span class="scene-dot" aria-hidden="true"></span>
           <span class="scene-dot" aria-hidden="true"></span>
         </nav>
+
+        <div id="hud-player-pill" class="hud-player-pill" hidden>
+          <span class="hud-player-dot" aria-hidden="true"></span>
+          <span id="hud-player-name"></span>
+        </div>
       </div>
 
       <div class="hud-group">
+        <button
+          type="button"
+          id="btn-hud-river"
+          class="icon-btn"
+          aria-label="เปิดดูแม่น้ำกลาง"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path>
+            <path d="M2 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path>
+            <circle cx="12" cy="6" r="2.2"></circle>
+          </svg>
+          <span class="icon-btn__label">แม่น้ำกลาง</span>
+        </button>
+
         <button
           type="button"
           id="btn-sound"
@@ -127,33 +147,37 @@
         aria-hidden="false"
       >
         <div class="moonlit-hero scene-interactive">
+          <p class="river-pop-pill reveal reveal-d1" id="river-population-badge">
+            กำลังลอยอยู่ 10 ใบ · คอลเลกชัน 10 · ผู้เล่น 0
+          </p>
           <p class="moonlit-eyebrow reveal reveal-d1">คืนเพ็ญเดือนสิบสอง</p>
           <h1 class="moonlit-title reveal reveal-d2">A Little Wish</h1>
           <p class="moonlit-subtitle reveal reveal-d3">
             คืนนี้พระจันทร์สวยจัง...<br />
-            มาใช้เวลาเล็ก ๆ ริมสายน้ำด้วยกันนะ
+            มาประดิษฐ์กระทงและลอยลงแม่น้ำสายเดียวกันนะ
           </p>
-          <button
-            type="button"
-            id="btn-begin"
-            class="btn-primary reveal reveal-d4"
-          >
-            เริ่มค่ำคืนนี้
-          </button>
+          <div class="hero-actions-row reveal reveal-d4">
+            <button type="button" id="btn-begin" class="btn-primary">
+              เริ่มสร้างกระทงของคุณ
+            </button>
+            <button type="button" id="btn-explore-river" class="btn-secondary">
+              ชมแม่น้ำกลางคืน
+            </button>
+          </div>
           <p class="moonlit-hint reveal reveal-d4">
-            แตะผิวน้ำเบา ๆ เพื่อสร้างระลอกคลื่นได้นะ
+            แตะกระทงบนผิวน้ำเพื่ออ่านคำอธิษฐาน หรือแตะน้ำเพื่อสร้างคลื่น
           </p>
         </div>
       </section>
 
       <!-- ================================================================
-           SCENE 2: A Little Invitation
+           SCENE 2: A Little Invitation & Player Nickname Session
            ================================================================ -->
       <section
         id="scene-invitation"
         class="scene scene--invitation"
         data-scene="2"
-        aria-label="ฉากที่ 2 คำชวนเล็ก ๆ"
+        aria-label="ฉากที่ 2 คำชวนเล็ก ๆ และชื่อเล่นของคุณ"
         aria-hidden="true"
       >
         <article class="vellum-card scene-interactive">
@@ -165,125 +189,258 @@
             height="120"
           />
           <p class="invitation-en reveal reveal-d1">A Little Invitation</p>
-          <h2 class="invitation-heading reveal reveal-d2">คำชวนเล็ก ๆ สำหรับคืนนี้</h2>
+          <h2 class="invitation-heading reveal reveal-d2">คำชวนเล็ก ๆ สู่แม่น้ำกลางคืน</h2>
           <div class="divider-line reveal reveal-d2" aria-hidden="true"></div>
+
+          <div id="returning-session-banner" class="returning-banner reveal reveal-d2" hidden>
+            <span id="returning-session-summary"></span>
+          </div>
+
           <p class="invitation-body reveal reveal-d3">
-            เหนื่อยมาทั้งวันแล้วใช่ไหม<br />
-            คืนนี้ลองวางเรื่องหนักใจไว้ข้างหลังสักครู่<br />
-            เลือกกระทงใบที่ชอบ จุดเทียนดวงเล็ก ๆ<br />
-            แล้วฝากคำอธิษฐานให้สายน้ำพาไปอย่างอ่อนโยน
+            บอกชื่อเล่นเล็ก ๆ ที่อยากให้ปรากฏบนกระทงของคุณ<br />
+            เพื่อบันทึกแบบกระทงและลอยร่วมกับผู้เล่นคนอื่นในแม่น้ำสายเดียวกัน
           </p>
+
+          <div class="session-form reveal reveal-d3">
+            <label for="nickname-input" class="field-label">ชื่อเล่นของคุณ (ไม่ต้องกรอกข้อมูลส่วนตัว)</label>
+            <input
+              type="text"
+              id="nickname-input"
+              class="text-input"
+              maxlength="24"
+              autocomplete="nickname"
+              placeholder="เช่น น้องจันทร์, สายลม, ต้นข้าว"
+            />
+            <p id="nickname-error" class="field-error" role="alert"></p>
+          </div>
+
           <div class="card-actions reveal reveal-d4">
             <button type="button" id="btn-to-choose" class="btn-primary btn-block">
-              เลือกกระทงของคุณ
+              เข้าสู่สตูดิโอสร้างกระทง
             </button>
             <button type="button" id="btn-back-to-1" class="btn-ghost">
-              กลับไปชมแสงจันทร์
+              กลับไปหน้าแรก
             </button>
           </div>
         </article>
       </section>
 
       <!-- ================================================================
-           SCENE 3: Choose Your Krathong
+           SCENE 3: Krathong Creator Studio & 10-System-Collection
            ================================================================ -->
       <section
         id="scene-choose"
         class="scene scene--choose"
         data-scene="3"
-        aria-label="ฉากที่ 3 เลือกกระทงของคุณ"
+        aria-label="ฉากที่ 3 ออกแบบกระทงหรือเลือกจากคอลเลกชัน"
         aria-hidden="true"
       >
-        <div class="vellum-card choose-panel scene-interactive">
-          <h2 class="section-heading reveal reveal-d1">เลือกกระทงที่อยากลอยคืนนี้</h2>
-          <p class="section-sub reveal reveal-d1">
-            ปัดซ้าย–ขวา หรือแตะเพื่อเลือกกระทงทั้ง 3 แบบ
-          </p>
-
-          <div
-            id="krathong-carousel-stage"
-            class="carousel-stage reveal reveal-d2"
-            aria-roledescription="carousel"
-            aria-label="ตัวเลือกกระทง 3 รูปแบบ"
-          >
+        <div class="vellum-card studio-card scene-interactive">
+          <div class="studio-mode-switch" role="tablist" aria-label="โหมดสตูดิโอกระทง">
             <button
               type="button"
-              id="btn-prev-krathong"
-              class="carousel-arrow carousel-arrow--prev"
-              aria-label="กระทงก่อนหน้า"
+              id="tab-mode-creator"
+              class="mode-tab-btn is-active"
+              role="tab"
+              aria-selected="true"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
+              ออกแบบเอง (Creator)
             </button>
+            <button
+              type="button"
+              id="tab-mode-collection"
+              class="mode-tab-btn"
+              role="tab"
+              aria-selected="false"
+            >
+              คอลเลกชัน 10 แบบ
+            </button>
+          </div>
 
-            <div id="choose-krathong-assembly" class="krathong-assembly">
-              <div class="krathong-water-glow" aria-hidden="true"></div>
-              <img
-                src="assets/images/krathong-lotus.png"
-                alt="กระทงบัวชมพูแสงจันทร์"
-                class="krathong-base-img"
-                width="640"
-                height="506"
-              />
-              <div class="krathong-candle-wrap" aria-hidden="true">
-                <img
-                  src="assets/images/candle.png"
-                  alt=""
-                  class="krathong-candle-img"
-                  width="94"
-                  height="320"
-                />
-              </div>
+          <!-- Real-Time Live Canvas Preview -->
+          <div class="studio-preview-stage">
+            <canvas
+              id="creator-preview-canvas"
+              class="studio-preview-canvas"
+              aria-label="ตัวอย่างกระทงแบบเรียลไทม์"
+            ></canvas>
+          </div>
+
+          <!-- Mode A: Modular Krathong Creator -->
+          <div id="creator-workspace">
+            <div class="creator-subtabs" role="tablist" aria-label="หมวดการปรับแต่งกระทง">
+              <button type="button" class="creator-subtab is-active" data-creator-tab="base" role="tab" aria-selected="true">
+                1. ฐานและทรง
+              </button>
+              <button type="button" class="creator-subtab" data-creator-tab="flowers" role="tab" aria-selected="false">
+                2. ดอกไม้
+              </button>
+              <button type="button" class="creator-subtab" data-creator-tab="candle" role="tab" aria-selected="false">
+                3. เทียนและตกแต่ง
+              </button>
             </div>
 
-            <button
-              type="button"
-              id="btn-next-krathong"
-              class="carousel-arrow carousel-arrow--next"
-              aria-label="กระทงถัดไป"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
+            <div class="creator-scroll-panel">
+              <!-- Panel 1: Base Material & Proportions -->
+              <div data-creator-panel="base">
+                <div class="control-block">
+                  <div class="control-row-head"><span>รูปทรงและวัสดุฐานกระทง</span></div>
+                  <div id="creator-base-grid" class="choice-grid"></div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>โทนสีฐานใบตอง / วัสดุ</span></div>
+                  <div id="creator-base-tint" class="swatch-row"></div>
+                </div>
+
+                <div class="control-block sliders-two-col">
+                  <div>
+                    <div class="control-row-head">
+                      <label for="slider-diameter">เส้นผ่านศูนย์กลาง</label>
+                      <span id="val-diameter" class="control-value">100%</span>
+                    </div>
+                    <input id="slider-diameter" class="range-slider" type="range" min="0.80" max="1.25" step="0.02" value="1.0" />
+                  </div>
+                  <div>
+                    <div class="control-row-head">
+                      <label for="slider-height">ความสูงฐาน</label>
+                      <span id="val-height" class="control-value">100%</span>
+                    </div>
+                    <input id="slider-height" class="range-slider" type="range" min="0.80" max="1.25" step="0.02" value="1.0" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel 2: Multi-Layer Botanical Flowers -->
+              <div data-creator-panel="flowers" hidden>
+                <div class="layer-bar">
+                  <div class="layer-pills">
+                    <button type="button" class="chip-btn is-active" data-flower-layer="0">ดอกไม้วงหลัก</button>
+                    <button type="button" class="chip-btn" data-flower-layer="1">ดอกไม้ชั้นใน</button>
+                  </div>
+                  <button type="button" id="btn-toggle-layer2" class="chip-btn">ลบชั้นดอกไม้เสริม</button>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>ชนิดดอกไม้</span></div>
+                  <div id="creator-flower-species" class="choice-grid choice-grid--4"></div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>เฉดสีดอกไม้</span></div>
+                  <div id="creator-flower-colors" class="swatch-row"></div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>รูปแบบการจัดวาง</span></div>
+                  <div id="creator-flower-layouts" class="chip-row"></div>
+                </div>
+
+                <div class="control-block sliders-two-col">
+                  <div>
+                    <div class="control-row-head">
+                      <label for="slider-flower-count">จำนวนดอก</label>
+                      <span id="val-flower-count" class="control-value">8 ดอก</span>
+                    </div>
+                    <input id="slider-flower-count" class="range-slider" type="range" min="3" max="14" step="1" value="8" />
+                  </div>
+                  <div>
+                    <div class="control-row-head">
+                      <label for="slider-flower-size">ขนาดดอก</label>
+                      <span id="val-flower-size" class="control-value">100%</span>
+                    </div>
+                    <input id="slider-flower-size" class="range-slider" type="range" min="0.72" max="1.32" step="0.04" value="1.0" />
+                  </div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head">
+                    <label for="slider-flower-radius">ตำแหน่งระยะรัศมีจากจุดศูนย์กลาง</label>
+                    <span id="val-flower-radius" class="control-value">78%</span>
+                  </div>
+                  <input id="slider-flower-radius" class="range-slider" type="range" min="0.28" max="0.92" step="0.02" value="0.78" />
+                </div>
+              </div>
+
+              <!-- Panel 3: Candle & Thai Ornaments -->
+              <div data-creator-panel="candle" hidden>
+                <div class="control-block">
+                  <div class="control-row-head"><span>รูปแบบเทียน</span></div>
+                  <div id="creator-candle-grid" class="choice-grid"></div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>กรวยบายศรีรอบขอบกระทง</span></div>
+                  <div class="chip-row">
+                    <button type="button" class="chip-btn is-selected" data-baisi-count="0">ไม่มี</button>
+                    <button type="button" class="chip-btn" data-baisi-count="2">2 ยอด</button>
+                    <button type="button" class="chip-btn" data-baisi-count="4">4 ยอด</button>
+                    <button type="button" class="chip-btn" data-baisi-count="6">6 ยอด</button>
+                  </div>
+                </div>
+
+                <div class="control-block">
+                  <div class="control-row-head"><span>ของตกแต่งเพิ่มเติม</span></div>
+                  <div class="toggle-list">
+                    <label class="toggle-item">
+                      <span>ธูปหอม 3 ดอก</span>
+                      <input type="checkbox" id="chk-incense" />
+                    </label>
+                    <label class="toggle-item">
+                      <span>พวงมาลัยมุกมะลิประดับขอบ</span>
+                      <input type="checkbox" id="chk-pearl" />
+                    </label>
+                    <label class="toggle-item">
+                      <span>ละอองดาวแสงจันทร์ (Stardust Glow)</span>
+                      <input type="checkbox" id="chk-stardust" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode B: 10 System Krathong Collection Browser -->
+          <div id="collection-workspace" class="collection-workspace" hidden>
+            <div class="collection-meta-box">
+              <button type="button" id="btn-col-prev" class="collection-arrow collection-arrow--prev" aria-label="แบบก่อนหน้า">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+
+              <span id="collection-badge-id" class="collection-badge">SYS-KR-001 · A Little Wish Collection</span>
+              <h3 id="collection-title" class="collection-title">Moonlight Lotus — บัวแสงจันทร์</h3>
+              <p id="collection-subtitle" class="collection-sub"></p>
+              <p id="collection-wish-quote" class="collection-wish"></p>
+
+              <button type="button" id="btn-col-next" class="collection-arrow collection-arrow--next" aria-label="แบบถัดไป">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            <div id="collection-list" class="collection-strip" role="group" aria-label="คอลเลกชันกระทงตัวอย่าง 10 แบบ"></div>
+
+            <button type="button" id="btn-remix-system" class="btn-secondary btn-block">
+              นำแบบตัวอย่างนี้ไปแต่งต่อใน Creator
             </button>
           </div>
 
-          <div id="krathong-meta" class="krathong-meta reveal reveal-d2">
-            <h3 id="krathong-name" class="krathong-name">กระทงบัวชมพูแสงจันทร์</h3>
-            <p id="krathong-desc" class="krathong-desc">
-              กลีบบัวสีชมพูอ่อนละมุน สำหรับคำอธิษฐานที่อบอุ่นและอ่อนโยน
-            </p>
-          </div>
-
-          <div class="krathong-thumbs reveal reveal-d3" role="group" aria-label="ทางลัดเลือกกระทง">
-            <button type="button" class="krathong-thumb is-selected" data-krathong-index="0" aria-pressed="true">
-              <img src="assets/images/krathong-lotus.png" alt="" width="64" height="51" />
-              <span>บัวชมพู</span>
-            </button>
-            <button type="button" class="krathong-thumb" data-krathong-index="1" aria-pressed="false">
-              <img src="assets/images/krathong-classic.png" alt="" width="64" height="52" />
-              <span>ใบตองคลาสสิก</span>
-            </button>
-            <button type="button" class="krathong-thumb" data-krathong-index="2" aria-pressed="false">
-              <img src="assets/images/krathong-swan.png" alt="" width="64" height="56" />
-              <span>หงส์น้อย</span>
-            </button>
-          </div>
-
-          <div class="card-actions reveal reveal-d4">
+          <div class="card-actions">
             <button type="button" id="btn-to-wish" class="btn-primary btn-block">
-              ใช้กระทงใบนี้
+              ใช้กระทงใบนี้ · ไปจุดเทียนอธิษฐาน
             </button>
             <button type="button" id="btn-back-to-2" class="btn-ghost">
-              ย้อนกลับ
+              เปลี่ยนชื่อเล่น
             </button>
           </div>
         </div>
       </section>
 
       <!-- ================================================================
-           SCENE 4: Make A Wish
+           SCENE 4: Make A Wish & Light Candle
            ================================================================ -->
       <section
         id="scene-wish"
@@ -296,34 +453,12 @@
           <h2 class="section-heading reveal reveal-d1">จุดเทียนและอธิษฐาน</h2>
 
           <div class="wish-stage reveal reveal-d2">
-            <div id="wish-krathong-assembly" class="krathong-assembly krathong-assembly--compact">
-              <div class="krathong-bob-layer">
-                <div class="krathong-water-glow" aria-hidden="true"></div>
-                <img
-                  src="assets/images/krathong-lotus.png"
-                  alt="กระทงที่คุณเลือก"
-                  class="krathong-base-img"
-                  width="640"
-                  height="506"
-                />
-                <div class="krathong-candle-wrap" aria-hidden="true">
-                  <div class="krathong-candle-aura"></div>
-                  <img
-                    src="assets/images/candle.png"
-                    alt=""
-                    class="krathong-candle-img"
-                    width="94"
-                    height="320"
-                  />
-                  <img
-                    src="assets/images/flame.png"
-                    alt=""
-                    class="krathong-flame-img"
-                    width="203"
-                    height="256"
-                  />
-                </div>
-              </div>
+            <div id="wish-krathong-assembly" class="wish-canvas-wrap">
+              <canvas
+                id="wish-preview-canvas"
+                class="wish-preview-canvas"
+                aria-label="กระทงที่คุณออกแบบ"
+              ></canvas>
 
               <button
                 type="button"
@@ -352,6 +487,7 @@
             ></textarea>
             <span id="wish-counter" class="wish-counter" aria-live="off">0 / 140</span>
           </div>
+          <p id="wish-error" class="field-error" role="alert"></p>
 
           <div class="wish-chips reveal reveal-d3" role="group" aria-label="ตัวอย่างคำอธิษฐาน">
             <button type="button" class="wish-chip" data-wish="ขอให้คืนนี้ใจเบาสบาย">
@@ -370,27 +506,33 @@
               จุดเทียนก่อนปล่อยกระทง
             </button>
             <button type="button" id="btn-back-to-3" class="btn-ghost">
-              เปลี่ยนกระทง
+              กลับไปแก้ไขกระทง
             </button>
           </div>
         </div>
       </section>
 
       <!-- ================================================================
-           SCENE 5: Let It Float
+           SCENE 5: Community River & Let It Float
            ================================================================ -->
       <section
         id="scene-float"
         class="scene scene--float"
         data-scene="5"
-        aria-label="ฉากที่ 5 ปล่อยกระทงลงสายน้ำ"
+        aria-label="ฉากที่ 5 แม่น้ำกลางคืนและปล่อยกระทง"
         aria-hidden="true"
       >
         <div id="float-header" class="float-header reveal reveal-d1">
-          <h2 id="float-caption" class="float-caption">กระทงพร้อมลอยแล้ว</h2>
+          <h2 id="float-caption" class="float-caption">กระทงของคุณพร้อมลงน้ำแล้ว</h2>
           <p id="float-subcaption" class="float-subcaption">
-            ค่อย ๆ ดันกระทงขึ้น หรือแตะปุ่มด้านล่างเพื่อปล่อยลงสายน้ำ
+            ค่อย ๆ ดันกระทงขึ้น หรือแตะปุ่มเพื่อปล่อยสู่แม่น้ำกลาง
           </p>
+          <div class="community-bar scene-interactive">
+            <span id="community-stats-pill" class="river-pop-pill">
+              แม่น้ำกลาง: 10 ใบ · แตะกระทงเพื่ออ่านคำอธิษฐาน
+            </span>
+            <span id="sync-mode-pill" class="sync-mode-badge"></span>
+          </div>
         </div>
 
         <div class="float-controls scene-interactive">
@@ -401,18 +543,27 @@
             <span>ดันขึ้นเบา ๆ เพื่อปล่อยกระทง</span>
           </div>
 
-          <button type="button" id="btn-release-krathong" class="btn-primary btn-block">
-            ค่อย ๆ ปล่อยกระทงลงน้ำ
-          </button>
+          <div class="float-btn-row">
+            <button type="button" id="btn-release-krathong" class="btn-primary">
+              ปล่อยลงแม่น้ำกลาง
+            </button>
+            <button type="button" id="btn-edit-before-release" class="btn-secondary">
+              แก้ไขกระทง
+            </button>
+          </div>
 
           <button type="button" id="btn-to-message" class="btn-secondary btn-block is-hidden-soft" hidden>
-            เปิดข้อความเล็ก ๆ
+            เปิดการ์ดความทรงจำ
+          </button>
+
+          <button type="button" id="btn-create-more" class="btn-primary btn-block" hidden>
+            สร้างกระทงของคุณเอง
           </button>
         </div>
       </section>
 
       <!-- ================================================================
-           SCENE 6: A Little Message
+           SCENE 6: A Little Message & Keepsake
            ================================================================ -->
       <section
         id="scene-message"
@@ -430,34 +581,12 @@
             height="120"
           />
 
-          <div class="keepsake-emblem reveal reveal-d1">
-            <div id="keepsake-krathong-assembly" class="krathong-assembly krathong-assembly--mini is-lit">
-              <div class="krathong-water-glow" aria-hidden="true"></div>
-              <img
-                src="assets/images/krathong-lotus.png"
-                alt="กระทงที่คุณลอย"
-                class="krathong-base-img"
-                width="640"
-                height="506"
-              />
-              <div class="krathong-candle-wrap" aria-hidden="true">
-                <div class="krathong-candle-aura"></div>
-                <img
-                  src="assets/images/candle.png"
-                  alt=""
-                  class="krathong-candle-img"
-                  width="94"
-                  height="320"
-                />
-                <img
-                  src="assets/images/flame.png"
-                  alt=""
-                  class="krathong-flame-img"
-                  width="203"
-                  height="256"
-                />
-              </div>
-            </div>
+          <div class="keepsake-canvas-wrap reveal reveal-d1">
+            <canvas
+              id="keepsake-preview-canvas"
+              class="studio-preview-canvas"
+              aria-label="กระทงที่คุณปล่อยลงแม่น้ำ"
+            ></canvas>
           </div>
 
           <h2 class="section-heading reveal reveal-d2">ข้อความเล็ก ๆ ใต้แสงจันทร์</h2>
@@ -470,12 +599,10 @@
           </div>
 
           <p class="keepsake-closing reveal reveal-d3">
-            ขอให้แสงจันทร์คืนนี้โอบกอดใจคุณไว้เบา ๆ<br />
-            และขอให้สายน้ำพาคำอธิษฐานเล็ก ๆ นี้<br />
-            ไปถึงวันที่อ่อนโยนและสวยงามนะ
+            กระทงของคุณกำลังล่องอยู่ร่วมกับกระทงดวงอื่นบนแม่น้ำสายเดียวกันแล้วนะ
           </p>
 
-          <p class="keepsake-signoff reveal reveal-d3">
+          <p id="keepsake-author" class="keepsake-signoff reveal reveal-d3">
             — A Little Wish · คืนเพ็ญเดือนสิบสอง —
           </p>
 
@@ -483,13 +610,58 @@
             <button type="button" id="btn-save-keepsake" class="btn-primary">
               เก็บการ์ดความทรงจำ
             </button>
-            <button type="button" id="btn-restart" class="btn-secondary">
-              เริ่มค่ำคืนใหม่อีกครั้ง
+            <button type="button" id="btn-view-river-from-6" class="btn-secondary">
+              กลับไปดูแม่น้ำกลาง
             </button>
           </div>
+          <button type="button" id="btn-restart" class="btn-ghost" style="margin-top:0.45rem;">
+            สร้างกระทงใหม่อีกใบ
+          </button>
         </article>
       </section>
     </main>
+
+    <!-- Community Krathong Profile Popup Modal -->
+    <div
+      id="krathong-profile-modal"
+      class="profile-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="profile-title"
+      hidden
+    >
+      <article class="profile-card">
+        <button type="button" id="btn-profile-close" class="profile-close-btn" aria-label="ปิดหน้าต่าง">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="profile-preview-wrap">
+          <canvas id="profile-preview-canvas" class="studio-preview-canvas" aria-label="ภาพกระทง"></canvas>
+        </div>
+
+        <span id="profile-badge" class="profile-badge is-system">A Little Wish Collection</span>
+        <h3 id="profile-title" class="profile-title">Moonlight Lotus</h3>
+        <p id="profile-id-label" class="profile-id">SYS-KR-001</p>
+
+        <div class="profile-wish-box">
+          <p id="profile-wish" class="profile-wish">“...”</p>
+        </div>
+
+        <p id="profile-meta" class="profile-meta"></p>
+
+        <div class="profile-actions">
+          <button type="button" id="btn-profile-edit" class="btn-primary" hidden>
+            แก้ไขกระทงของฉัน
+          </button>
+          <button type="button" id="btn-profile-remix" class="btn-secondary">
+            นำแบบไปแต่งต่อ
+          </button>
+        </div>
+      </article>
+    </div>
 
     <!-- Gentle Feedback Toast -->
     <div id="app-toast" class="toast" role="status" aria-live="polite"></div>

@@ -414,7 +414,8 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.krathong-assembly.is-lit .candle-hotspot__ring {
+.krathong-assembly.is-lit .candle-hotspot__ring,
+.wish-canvas-wrap.is-lit .candle-hotspot__ring {
   animation: none;
   opacity: 0;
   transform: scale(1.4);
